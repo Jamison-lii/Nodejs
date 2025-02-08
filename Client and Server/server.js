@@ -1,43 +1,50 @@
 const http = require('http');
 const fs = require('fs');
-
-const server = http.createServer((req, res)=>{
-  console.log('request made');
-  console.log(req.url,req.method);
+const _ = require('lodash');
 
 
-  
-res.setHeader('Content-Type', 'text/html');
 
-let path = './views/';
-switch(req.url){
-    case '/':
-     path += 'index.html';
-     break;
-    case '/about':
-     path += 'about.html';
-     break;
-    default:
-        path += '404.html';
-        break;
-}
 
-/*res.write('<p>hello, ninjas<p/>');
-res.write('<p>hello, again ninjas<p/>');
-res.end();*/
-fs.readFile(path, (err, data) => {
-    if(err){
-        console.log(err);
+const server = http.createServer((req, res) => {
+    console.log('Request made:', req.url, req.method);
+
+    res.setHeader('Content-Type', 'text/html');
+
+    let path = './Views/';
+    switch (req.url) {
+        case '/':
+            path += 'index.html';
+            res.statusCode = 200;
+            break;
+        case '/about':
+            path += 'about.html';
+            res.statusCode = 200;
+            break;
+        case '/about-me':
+            res.statusCode = 301;
+            res.setHeader('Location', '/about');
+            res.end();
+            return; // Prevents further execution
+        default:
+            path += '404.html';
+            res.statusCode = 404;
+            break;
     }
-    else{
+
+    console.log(`Serving file: ${path}`); // Debugging
+
+    fs.readFile(path, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.statusCode = 500;
+            res.end('<h1>Server Error</h1>');
+            return;
+        }
         res.write(data);
         res.end();
-    }
-})
-
+    });
 });
 
-
-server.listen(3000, 'localhost', function(){
-    console.log('listening on port 3000');
-})
+server.listen(3000, 'localhost', () => {
+    console.log('Listening on port 3000...');
+});
