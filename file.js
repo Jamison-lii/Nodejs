@@ -11,7 +11,7 @@ const fs  = require('fs');
 
 //write file
 /*fs.writeFile('./Docs/docs.txt', 'Hello World', ()=>{
-    console.log('file was written')
+    console.log('file was written indeed')
 }) */
 
 //diectories
